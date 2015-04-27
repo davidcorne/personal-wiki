@@ -1,0 +1,161 @@
+/*=============================================================================
+/* Override some Markdown CSS */
+body {
+    margin: 0 0 0 0;
+}
+
+input[type="submit"], input[type="reset"] {
+    border: none;
+    padding: 5px 15px 5px 15px;
+}
+
+input[type="submit"]:hover, input[type="reset"]:hover {
+    background: #3366FF;
+    color: white;
+}
+
+/*=============================================================================
+/* Setup some default style, removed by reset.css. */
+em {
+    font-style: italic;
+}
+
+/*===========================================================================*/
+/* Note as a whole */
+.note {
+    border: 1px solid #C0C0C0;
+    padding: 20px;
+}
+
+/*===========================================================================*/
+/* Note title */
+.title {
+    font-size: 48px;
+}
+
+.title a {
+    color: #3366FF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.title .title-buttons {
+    float: right;
+}
+
+.title-buttons form {
+    float: left;
+}
+
+/*===========================================================================*/
+/* Body of the note */
+.note-body {
+    margin: 2px 6px 2px 6px;
+}
+
+.note-body ul {
+    padding-left: 40px;
+}
+
+.note-body h1 {
+    font-size: 36px
+}
+
+.note-body h2 {
+    font-size: 24px
+}
+
+.note-body h4 {
+    font-size: 24px;
+}
+
+.note-body h5 {
+    font-size: 21px;
+}
+
+/*===========================================================================*/
+/* The edit page */
+
+.note-edit .note-edit-body {
+}
+
+.note-edit .note-body {
+    float: left;
+    width: 40%;
+}
+
+.note-edit-body textarea {
+    float: left;
+    width: 50%;
+    height: 200px;
+}
+
+.edit-buttons {
+    clear: left;
+}
+
+/*===========================================================================*/
+/* The navigation bar */
+.navigation-bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/*===========================================================================*/
+.navigation-bar li {
+    border: 1px solid #C0C0C0;
+    float: left;
+}
+
+/*===========================================================================*/
+.navigation-bar a:link, .navigation-bar a:visited {
+    display: block;
+    width: 120px;
+    font-weight: bold;
+    color: #3366FF;
+    text-align: center;
+    padding: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+/*===========================================================================*/
+.navigation-bar a:hover, navigation-bar a:active{
+    background-color: #DDDDDD;
+}
+
+/*===========================================================================*/
+/* New note form (http://www.sanwebe.com/2013/10/css-html-form-styles) */
+.new-note-form {
+    padding: 25px 15px 25px 10px;
+}
+.new-note-form label {
+    display: block;
+    margin: 0px;
+}
+.new-note-form input[type="text"], .new-note-form textarea, .new-note-form select {
+    border: 1px solid #DADADA;
+    height: 30px;
+    margin-bottom: 16px;
+    margin-right: 6px;
+    margin-top: 2px;
+    outline: 0 none;
+    padding: 3px 3px 3px 5px;
+    width: 70%;
+    line-height: 15px;
+    box-shadow: inset 0px 1px 4px #ECECEC;
+    -moz-box-shadow: inset 0px 1px 4px #ECECEC;
+    -webkit-box-shadow: inset 0px 1px 4px #ECECEC;
+}
+.new-note-form textarea {
+    padding: 5px 3px 3px 5px;
+}
+.new-note-form textarea{
+    height: 200px;
+}
+
+.new-note-form input[type="submit"] {
+    display: block;
+}
