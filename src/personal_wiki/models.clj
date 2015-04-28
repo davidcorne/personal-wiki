@@ -4,8 +4,10 @@
    )
   )
 
-(defn initialise []
-  (def connection (monger/connect))
-  (def db (monger/get-db connection "nodetest1"))
-  (def note-collection "notecollection")
+(defn initialise [uri]
+  (println "Connecting to:" uri)
+  (let [{:keys [connection db]} (monger/connect-via-uri uri)]
+    (def db db)
+    (def note-collection "notecollection")
+    )
   )
