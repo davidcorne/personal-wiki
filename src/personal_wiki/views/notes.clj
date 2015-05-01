@@ -10,16 +10,7 @@
   )
 
 ;==============================================================================
-(defpartial error-item [[first-error]]
-  [:p.error first-error])
-
-;==============================================================================
-(defpartial input-note-fields [{:keys [title body]}]
-  (vali/on-error :title error-item)
-  (form/label "title" "Title: ")
-  (form/text-field {:placeholder "Title"} "title" title)
-  (form/label "body" "Body: ")
-  (form/text-area "body" body))
+; Private utility functions.
 
 ;==============================================================================
 (defn- markdown-conversion-javascript [markdown]
@@ -62,6 +53,21 @@
    )
   (not (vali/errors? :title :body))
   )
+
+;==============================================================================
+; Partials.
+
+;==============================================================================
+(defpartial error-item [[first-error]]
+  [:p.error first-error])
+
+;==============================================================================
+(defpartial input-note-fields [{:keys [title body]}]
+  (vali/on-error :title error-item)
+  (form/label "title" "Title: ")
+  (form/text-field {:placeholder "Title"} "title" title)
+  (form/label "body" "Body: ")
+  (form/text-area "body" body))
 
 ;==============================================================================
 (defpartial display-note-title-buttons [title]
@@ -159,7 +165,10 @@
   )
 
 ;==============================================================================
-(defpage "/new-note" {:as note}
+; Routes through the app.
+
+;==============================================================================
+(defpage new-note "/new-note" {:as note}
   (common/layout
    (form/form-to 
     {:class "new-note-form"}
@@ -168,7 +177,7 @@
     (form/submit-button "Add note"))))
 
 ;==============================================================================
-(defpage [:post "/new-note"] {:as note}
+(defpage new-note [:post "/new-note"] {:as note}
   (if (note-valid? note)
     (do
       (model/add! note)
@@ -179,19 +188,25 @@
   )
 
 ;==============================================================================
-(defpage [:post "/delete-note"] {:as data}
+(defpage delete-note [:post "/delete-note"] {:as data}
   (model/remove! (get data :title))
   (resp/redirect "/")
   )
 
 ;==============================================================================
-(defpage "/note/edit/:title" {:keys [title]}
+(defpage edit-note "/note/edit/:title" {:keys [title]}
   (common/layout
    (display-edit-note (model/get-note title))
    ))
 
 ;==============================================================================
-(defpage  rename-page "/note/rename/:title" {:keys [title]}
+(defpage [:post "/note/edit/:title"] {:as data}
+  (model/update! data)
+  (resp/redirect (str "/note/" (get data :title)))
+  )
+
+;==============================================================================
+(defpage rename-page "/note/rename/:title" {:keys [title]}
   (common/layout
    (display-rename-note (model/get-note title))
    ))
@@ -214,23 +229,17 @@
   )
 
 ;==============================================================================
-(defpage [:post "/note/edit/:title"] {:as data}
-  (model/update! data)
-  (resp/redirect (str "/note/" (get data :title)))
-  )
-
-;==============================================================================
-(defpage "/note/:title" {:keys [title]}
+(defpage note-page "/note/:title" {:keys [title]}
   (common/layout
    (display-note-fields (model/get-note title))
    ))
 
 ;==============================================================================
-(defpage "/notes" {}
+(defpage notes-page "/notes" {}
   (common/layout
    (map display-note-fields (model/get-notes))
    ))
 
 ;==============================================================================
-(defpage "/" {}
+(defpage home-page "/" {}
   (resp/redirect "/notes"))
