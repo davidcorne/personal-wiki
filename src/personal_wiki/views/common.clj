@@ -22,7 +22,7 @@
      "/js/notes.js")
     (include-css 
      "/css/reset.css"
-     "http://kevinburke.bitbucket.org/markdowncss/markdown.css"
+     "https://kevinburke.bitbucket.org/markdowncss/markdown.css"
      "/css/prism.css"
      "/css/notes.css")
     ]
