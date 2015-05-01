@@ -1,13 +1,11 @@
 (ns personal-wiki.views.notes
   (:use noir.core
-        ; <nnn> [ring.util.codec :only [percent-encode percent-decode]]
         [hiccup.page :only [include-js]]
         [hiccup.element :only [javascript-tag]])
   (:require [noir.validation :as vali])
   (:require [noir.response :as resp])
   (:require [personal-wiki.views.common :as common])
   (:require [hiccup.form :as form])
-  ;(:require [ring/ring-codec :as ring])
   (:require [personal-wiki.models.note :as model])
   )
 
@@ -42,6 +40,21 @@
 )  
 
 ;==============================================================================
+(defn- note-title-valid? [title]
+  (vali/rule 
+   (model/valid-title? title)
+   [:title (str "Title \"" title "\" already taken.")]
+   )
+  (not (vali/errors? :title :body))
+  )
+
+;==============================================================================
+(defn- note-valid? [{:keys [title body]}]
+  (note-title-valid? title)
+  (not (vali/errors? :title :body))
+  )
+
+;==============================================================================
 (defn- note-valid? [{:keys [title body]}]
   (vali/rule 
    (model/valid-title? title)
@@ -55,6 +68,9 @@
   [:div.title-buttons
    [:form {:action (str "/note/edit/" title)}
     (form/submit-button "Edit")
+    ]
+   [:form {:action (str "/note/rename/" title)}
+    (form/submit-button "Rename")
     ]
    (form/form-to 
     {:onsubmit (delete-note-confirmation-javascript title)}
@@ -121,6 +137,28 @@
   )
 
 ;==============================================================================
+(defpartial display-rename-note [{:keys [title body]}]
+  [:div.note
+    [:h1.title
+     (form/form-to
+      [:post 
+       (str 
+        "/note/rename/" 
+        (clojure.string/escape title {\space "%20"})
+        )
+       ]
+      (form/hidden-field "old-title" title)
+      (vali/on-error :title error-item)
+      (form/label "title" "New Title: ")
+      (form/text-field "new-title" title)
+      (form/submit-button "Rename")
+      )
+     ]
+    (display-note-body body)
+   ]
+  )
+
+;==============================================================================
 (defpage "/new-note" {:as note}
   (common/layout
    (form/form-to 
@@ -151,6 +189,29 @@
   (common/layout
    (display-edit-note (model/get-note title))
    ))
+
+;==============================================================================
+(defpage  rename-page "/note/rename/:title" {:keys [title]}
+  (common/layout
+   (display-rename-note (model/get-note title))
+   ))
+
+;==============================================================================
+(defpage [:post "/note/rename/:title"] {:as data}
+  (let [old-title (get data :old-title)
+        new-title (get data :new-title)]
+    (if (note-title-valid? new-title)
+      (do
+        (model/rename! old-title new-title)
+        (resp/redirect (str "/note/" new-title))
+        )
+      (do
+        ; <nnn> Should use render and use the error, couldn't get it to work.
+        (resp/redirect (str "/note/rename/" old-title))
+        )
+      )
+    )
+  )
 
 ;==============================================================================
 (defpage [:post "/note/edit/:title"] {:as data}

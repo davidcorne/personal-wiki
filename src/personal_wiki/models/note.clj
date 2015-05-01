@@ -2,6 +2,7 @@
   (:require 
    [monger.core :as mg]
    [monger.collection :as mc]
+   [monger.operators :refer :all]
    [personal-wiki.models :as models]
    )
   (:import [org.bson.types ObjectId]))
@@ -40,6 +41,16 @@
   (let [old-note (get-note (get note :title))]
     (mc/update-by-id models/db models/note-collection (get old-note :_id) note)
     )
+  )
+
+;==============================================================================
+(defn rename! [old-title new-title]
+  (mc/update 
+   models/db
+   models/note-collection
+   {:title old-title}
+   {$set {:title new-title}}
+   )
   )
 
 ;==============================================================================
