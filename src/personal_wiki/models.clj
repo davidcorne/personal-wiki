@@ -1,6 +1,7 @@
 (ns personal-wiki.models
   (:require 
    [monger.core :as monger]
+   [personal-wiki.models.note :as note]
    )
   )
 
@@ -21,15 +22,11 @@
    (get :db)
    )
   )
-  
+
 ;==============================================================================
 (defn initialise [uri]
-  (def note-collection "notecollection")
-  (def db 
-    (if (nil? uri)
-      (initialise-local)
-      (initialise-uri uri)
-      )
+  (let [db (if (nil? uri) (initialise-local)(initialise-uri uri))]
+    (note/initialise db)
     )
   )
 

@@ -177,7 +177,7 @@
     (form/submit-button "Add note"))))
 
 ;==============================================================================
-(defpage new-note [:post "/new-note"] {:as note}
+(defpage [:post "/new-note"] {:as note}
   (if (note-valid? note)
     (do
       (model/add! note)
@@ -200,9 +200,9 @@
    ))
 
 ;==============================================================================
-(defpage [:post "/note/edit/:title"] {:as data}
-  (model/update! data)
-  (resp/redirect (str "/note/" (get data :title)))
+(defpage [:post "/note/edit/:title"] {:keys [title body]}
+  (model/update! title body)
+  (resp/redirect (str "/note/" title))
   )
 
 ;==============================================================================
@@ -237,8 +237,12 @@
 ;==============================================================================
 (defpage notes-page "/notes" {}
   (common/layout
-   (map display-note-fields (model/get-notes))
-   ))
+   (let [notes (model/get-notes)]
+     (println notes)
+     (map display-note-fields notes)
+     )
+   )
+  )
 
 ;==============================================================================
 (defpage home-page "/" {}
