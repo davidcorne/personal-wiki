@@ -52,7 +52,7 @@
 
 ;==============================================================================
 (defpartial display-note-title-buttons [title]
-  [:div {:class "title-buttons"}
+  [:div.title-buttons
    [:form {:action (str "/note/edit/" title)}
     (form/submit-button "Edit")
     ]
@@ -66,7 +66,7 @@
 
 ;==============================================================================
 (defpartial display-note-title [title title-buttons]
-  [:h1 {:class "title"} 
+  [:h1.title
    [:a {:href (str "/note/" title)} title]
    (title-buttons)
    ]
@@ -74,25 +74,25 @@
 
 ;==============================================================================
 (defpartial display-note-body [body]
-   [:div {:class "note-body" }]
+   [:div.note-body]
    [:script
     (->
      (clojure.string/escape body {\' "\\'" \return "" \newline "\\n"})
      (markdown-conversion-javascript)
      )
     ]
-   )
+    )
 
 ;==============================================================================
 (defpartial display-note-fields [{:keys [title body]}]
-  [:div {:class "note"}
+  [:div.note
     (display-note-title title (fn [] (display-note-title-buttons title)))
     (display-note-body body)
    ])
 
 ;==============================================================================
 (defpartial display-edit-note-body [title body]
-  [:div {:class "note-edit-body"}
+  [:div.note-edit-body
    (form/form-to 
     [:post 
      (str 
@@ -102,7 +102,7 @@
      ]
     [:textarea {:name "body"} body]
     (display-note-body body)
-    [:div {:class "edit-buttons"}
+    [:div.edit-buttons
      (form/submit-button "Save")
      (form/reset-button "Reset")
      ]
@@ -112,8 +112,8 @@
 
 ;==============================================================================
 (defpartial display-edit-note [{:keys [title body]}]
-  [:div {:class "note"}
-   [:div {:class "note-edit"}
+  [:div.note
+   [:div.note-edit
     (display-note-title title (fn [] ))
     (display-edit-note-body title body)
     ]
