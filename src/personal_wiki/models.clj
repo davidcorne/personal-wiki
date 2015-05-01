@@ -18,7 +18,7 @@
   (println "Connecting to:" uri)
   (->
    (monger/connect-via-uri uri)
-   (key :db)
+   (get :db)
    )
   )
   
