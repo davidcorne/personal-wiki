@@ -4,10 +4,32 @@
    )
   )
 
-(defn initialise [uri]
+;==============================================================================
+(defn- initialise-local []
+  (println "Connecting to local dev db.")
+  (->
+   (monger/connect)
+   (monger/get-db "notes")
+   )
+  )
+  
+;==============================================================================
+(defn- initialise-uri [uri]
   (println "Connecting to:" uri)
-  (let [{:keys [connection db]} (monger/connect-via-uri uri)]
-    (def db db)
-    (def note-collection "notecollection")
+  (->
+   (monger/connect-via-uri uri)
+   (key :db)
+   )
+  )
+  
+;==============================================================================
+(defn initialise [uri]
+  (def note-collection "notecollection")
+  (def db 
+    (if (nil? uri)
+      (initialise-local)
+      (initialise-uri uri)
+      )
     )
   )
+

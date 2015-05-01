@@ -6,8 +6,13 @@
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
-        port (Integer. (get (System/getenv) "PORT" "8080"))]
-    (models/initialise (get (System/getenv) "NOTES_DB_URI"))
-    (server/start port {:mode mode
-                        :ns 'personal-wiki})))
+        port (Integer. (get (System/getenv) "PORT" "8080"))
+        uri (get (System/getenv) "NOTES_DB_URI")]
+    (models/initialise uri)
+    (server/start 
+     port 
+     {:mode mode :ns 'personal-wiki}
+     )
+    )
+  )
 
