@@ -7,11 +7,19 @@
   (:import [org.bson.types ObjectId]))
 
 ;==============================================================================
+(defn- get-notes-by-title [title]
+  (mc/find-maps models/db models/note-collection {:title title})
+  )
+
+;==============================================================================
+(defn valid-title? [title]
+  (empty? (get-notes-by-title title))
+  )
+
+;==============================================================================
 (defn get-note [title]
   (->
-   (mc/find-maps models/db models/note-collection {:title title})
-   ; get the first member in the collection
-   ;TODO make sure it has exactly one
+   (get-notes-by-title title)
    (first)
    ))
 

@@ -12,7 +12,12 @@
   )
 
 ;==============================================================================
+(defpartial error-item [[first-error]]
+  [:p.error first-error])
+
+;==============================================================================
 (defpartial input-note-fields [{:keys [title body]}]
+  (vali/on-error :title error-item)
   (form/label "title" "Title: ")
   (form/text-field {:placeholder "Title"} "title" title)
   (form/label "body" "Body: ")
@@ -35,6 +40,15 @@
    "\"?')"
    )
 )  
+
+;==============================================================================
+(defn- note-valid? [{:keys [title body]}]
+  (vali/rule 
+   (model/valid-title? title)
+   [:title (str "Title \"" title "\" already taken.")]
+   )
+  (not (vali/errors? :title :body))
+  )
 
 ;==============================================================================
 (defpartial display-note-title-buttons [title]
@@ -117,8 +131,14 @@
 
 ;==============================================================================
 (defpage [:post "/new-note"] {:as note}
-  (model/add! note)
-  (resp/redirect (str "/note/" (get note :title))))
+  (if (note-valid? note)
+    (do
+      (model/add! note)
+      (resp/redirect (str "/note/" (get note :title)))
+      )
+    (render "/new-note" note)
+    )
+  )
 
 ;==============================================================================
 (defpage [:post "/delete-note"] {:as data}
