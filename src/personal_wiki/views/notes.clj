@@ -214,7 +214,7 @@
 ;==============================================================================
 (defpage [:post "/note/rename/:title"] {:as data}
   (let [old-title (:old-title data)
-        new-title (:new-title get data)]
+        new-title (:new-title data)]
     (if (note-title-valid? new-title)
       (do
         (model/rename! old-title new-title)
