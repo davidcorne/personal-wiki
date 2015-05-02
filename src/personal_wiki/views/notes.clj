@@ -181,7 +181,7 @@
   (if (note-valid? note)
     (do
       (model/add! note)
-      (resp/redirect (str "/note/" (get note :title)))
+      (resp/redirect (str "/note/" (:title note)))
       )
     (render "/new-note" note)
     )
@@ -189,7 +189,7 @@
 
 ;==============================================================================
 (defpage delete-note [:post "/delete-note"] {:as data}
-  (model/remove! (get data :title))
+  (model/remove! (:title data))
   (resp/redirect "/")
   )
 
@@ -213,8 +213,8 @@
 
 ;==============================================================================
 (defpage [:post "/note/rename/:title"] {:as data}
-  (let [old-title (get data :old-title)
-        new-title (get data :new-title)]
+  (let [old-title (:old-title data)
+        new-title (:new-title get data)]
     (if (note-title-valid? new-title)
       (do
         (model/rename! old-title new-title)
