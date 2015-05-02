@@ -12,15 +12,17 @@
   (let [notes (mc/find-maps db note-collection {})
         predicate #(not (contains? % :datetime-created))
         notes-without-creation (filter predicate notes)
-        ids-to-update (map #(get % :_id) notes-without-creation)
+        ids-to-update (map #(:_id %) notes-without-creation)
         now (new java.util.Date)
         ]
-    (mc/update-by-ids
-     db
-     note-collection
-     ids-to-update
-     {$set {:datetime-created now}}
-     )
+    (if (not (empty? ids-to-update))
+      (mc/update-by-ids
+       db
+       note-collection
+       ids-to-update
+       {$set {:datetime-created now}}
+       )
+      )
     )
   )
 
@@ -68,7 +70,7 @@
 (defn update! [title body]
   (let [old-note (get-note title)
         note (assoc old-note :body body)]
-    (mc/update-by-id db note-collection (get old-note :_id) note)
+    (mc/update-by-id db note-collection (:_id old-note) note)
     )
   )
 
