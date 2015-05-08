@@ -38,6 +38,10 @@
    )
   (not (vali/errors? :title :body))
   )
+;==============================================================================
+(defn- sanitise-note-title [title]
+  (clojure.string/trim title)
+  )
 
 ;==============================================================================
 (defn- note-valid? [{:keys [title body]}]
@@ -98,6 +102,7 @@
 (defpartial display-note-body [body]
    [:div.note-body]
    [:script
+    (println body)
     (->
      (clojure.string/escape body {\' "\\'" \return "" \newline "\\n"})
      (markdown-conversion-javascript)
@@ -177,13 +182,15 @@
     (form/submit-button "Add note"))))
 
 ;==============================================================================
-(defpage [:post "/new-note"] {:as note}
-  (if (note-valid? note)
-    (do
-      (model/add! note)
-      (resp/redirect (str "/note/" (:title note)))
+(defpage [:post "/new-note"] {:as raw-note}
+  (let [note (update-in raw-note [:title] sanitise-note-title)]
+    (if (note-valid? note)
+      (do
+        (model/add! note)
+        (resp/redirect (str "/note/" (:title note)))
+        )
+      (render "/new-note" note)
       )
-    (render "/new-note" note)
     )
   )
 
@@ -214,7 +221,7 @@
 ;==============================================================================
 (defpage [:post "/note/rename/:title"] {:as data}
   (let [old-title (:old-title data)
-        new-title (:new-title data)]
+        new-title (sanitise-note-title (:new-title data))]
     (if (note-title-valid? new-title)
       (do
         (model/rename! old-title new-title)
@@ -230,9 +237,24 @@
 
 ;==============================================================================
 (defpage note-page "/note/:title" {:keys [title]}
+  (println title)
+  (if (model/note-exists? title)
+    (do
+      (common/layout
+       (println title)
+       (println (model/get-notes))
+       (display-note-fields (model/get-note title))
+       ))
+    (render (str "/note-not-found/" title))
+    )
+  )
+
+;==============================================================================
+(defpage note-not-found "/note-not-found/:title" {:keys [title]}
   (common/layout
-   (display-note-fields (model/get-note title))
-   ))
+   [:p (str "Sorry, the note \"" title "\" does not exist.")]
+   )
+  )
 
 ;==============================================================================
 (defpage notes-page "/notes" {}

@@ -15,6 +15,7 @@
 (defpartial layout [& content]
   (html5
    [:head
+    [:link {:rel "shortcut icon" :href "/favicon.ico"}]
     [:title "personal-wiki"]
     (include-js 
      "/js/commonmark.js"
